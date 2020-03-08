@@ -1,8 +1,0 @@
-auto eth0
-iface eth0 inet static
-  address 192.168.0.7
-  netmask 255.255.255.0
-  gateway 192.168.0.1
-  post-up route add -net 239.0.0.0 netmask 255.255.255.0 dev eth0
-  post-down route del -net 239.0.0.0 netmask 255.255.255.0 dev eth0
-
