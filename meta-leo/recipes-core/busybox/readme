@@ -1,0 +1,2 @@
+#how to produce the scr file
+/home/uic13726/work/dey/leo/tmp/work/ccimx8x_sbc_pro-dey-linux/u-boot-dey/2018.03-r2.2/build/ccimx8x_sbc_pro1GB_defconfig/tools/mkimage -T script -n "DEY firmware install script" -C none -d install_linux_fw_sd.txt install_linux_fw_sd.scr
