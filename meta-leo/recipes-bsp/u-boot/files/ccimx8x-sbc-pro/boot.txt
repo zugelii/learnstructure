@@ -1,0 +1,75 @@
+# Set SOC type to "imx8qxp" if not already defined by U-Boot
+if test ! -n "${soc_type}"; then
+	setenv soc_type "imx8qxp"
+fi
+
+#
+# Set device tree filename depending on the board ID (if defined)
+#
+if test -n "${board_id}"; then
+	setenv fdt_file cc${soc_type}-sbc-pro-id${board_id}.dtb
+else
+	#
+	# Set device tree filename depending on the hardware capabilities
+	#
+	if test -n "${module_ram}"; then
+		setexpr module_has_wifi ${hwid_3} \& 1
+		setexpr module_has_bt ${hwid_3} \& 2
+		setexpr module_has_bt ${module_has_bt} / 2
+
+		if test "${module_has_wifi}" = "1" &&
+		   test "${module_has_bt}" = "1"; then
+			setenv fdt_file cc${soc_type}-sbc-pro-wb.dtb
+		else
+			setenv fdt_file cc${soc_type}-sbc-pro.dtb
+		fi
+	else
+		#
+		# Set device tree filename depending on the hardware variant
+		#
+		if test "${module_variant}" = "0x01" ||
+		   test "${module_variant}" = "0x02" ||
+		   test "${module_variant}" = "0x04"; then
+			setenv fdt_file cc${soc_type}-sbc-pro-wb.dtb
+		elif test "${module_variant}" = "0x03" ||
+		     test "${module_variant}" = "0x05" ||
+		     test "${module_variant}" = "0x06"; then
+			setenv fdt_file cc${soc_type}-sbc-pro.dtb
+		else
+			setenv fdt_file cc${soc_type}-sbc-pro-wb.dtb
+		fi
+	fi
+fi
+
+
+test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "rootfs update"
+test -n "${BOOT_rootfs_LEFT}" || setenv BOOT_rootfs_LEFT 3
+test -n "${BOOT_update_LEFT}" || setenv BOOT_update_LEFT 3
+
+for BOOT_SLOT in "${BOOT_ORDER}"; do
+  if test "x${BOOT_SLOT}" = "xrootfs"; then
+    if test ${BOOT_rootfs_LEFT} -gt 0; then
+      setexpr BOOT_rootfs_LEFT ${BOOT_rootfs_LEFT} - 1
+      echo "Active slot is rootfs (slot A), ${BOOT_rootfs_LEFT} boot attempts remaining before reverting to previous slot."
+      setenv mmcroot "/dev/mmcblk0p3"
+      saveenv
+      dboot linux mmc
+    fi
+  elif test "x${BOOT_SLOT}" = "xupdate"; then
+    if test ${BOOT_update_LEFT} -gt 0; then
+      setexpr BOOT_update_LEFT ${BOOT_update_LEFT} - 1
+      echo "Active slot is update (slot B), ${BOOT_update_LEFT} boot attempts remaining before reverting to previous slot."
+      setenv mmcroot "/dev/mmcblk0p4"
+      saveenv
+      dboot linux mmc
+    fi
+  fi
+done
+
+echo "All slots are at zero remaining attempts. Probably no bootable partition left. Resetting all variables and retrying anyway."
+setenv BOOT_ORDER "rootfs update"
+setenv BOOT_rootfs_LEFT 3
+setenv BOOT_update_LEFT 3
+saveenv
+reset
+

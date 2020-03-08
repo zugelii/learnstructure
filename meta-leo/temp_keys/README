@@ -1,0 +1,12 @@
+This is a temporary storage location for the deverloper
+certificate and its private key so that developers can create
+signed rauc upgrade bundles.
+
+Storing private keys for signing secure upadte packages in github
+is NOT a good idea. We need an official secure strategy for handling
+the update bundle signing certificates and their respective keys.
+
+This folder MUST be removed before the project reaches production state
+
+
+

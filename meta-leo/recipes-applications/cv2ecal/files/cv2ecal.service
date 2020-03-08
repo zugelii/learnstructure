@@ -1,0 +1,13 @@
+
+[Unit]
+Description=cv2ecal service
+After=ifupdown.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/Cv2eCAL
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

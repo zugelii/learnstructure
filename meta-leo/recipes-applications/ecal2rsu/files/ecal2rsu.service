@@ -1,0 +1,13 @@
+
+[Unit]
+Description=ecal2rsu service
+After=smartroadem.service mosquitto.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/eCal2RSU
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

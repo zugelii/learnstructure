@@ -1,0 +1,12 @@
+[Unit]
+Description=check if writable network interface config exists, if not, copy default one.
+Before=ifupdown.service network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/network/cp_interfaces.sh
+
+[Install]
+RequiredBy=network-online.target

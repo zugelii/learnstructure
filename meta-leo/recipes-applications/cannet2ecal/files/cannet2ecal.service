@@ -1,0 +1,15 @@
+
+[Unit]
+Description=Cannet2Ecal service
+After=ifupdown.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/Cannet2Ecal
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
