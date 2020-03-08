@@ -1,0 +1,240 @@
+diff --git a/meta-digi-arm/conf/machine/ccimx8x-sbc-pro.conf b/meta-digi-arm/conf/machine/ccimx8x-sbc-pro.conf
+index 6a5191a..8ecae3f 100644
+--- a/meta-digi-arm/conf/machine/ccimx8x-sbc-pro.conf
++++ b/meta-digi-arm/conf/machine/ccimx8x-sbc-pro.conf
+@@ -43,4 +43,5 @@ XBEE_SLEEP_RQ_GPIO ?= "216"
+ BOOT_SCRIPTS = "boot.scr:boot.scr"
+ 
+ # Flash image types
+-IMAGE_FSTYPES ?= "boot.vfat ext4 sdcard tar.bz2 recovery.vfat"
++#IMAGE_FSTYPES ?= "boot.vfat ext4 sdcard tar.bz2 recovery.vfat"
++IMAGE_FSTYPES ?= "boot.vfat ext4  recovery.vfat"
+diff --git a/meta-digi-arm/recipes-bsp/u-boot/u-boot-dey/ccimx8x-sbc-pro/install_linux_fw_sd.txt b/meta-digi-arm/recipes-bsp/u-boot/u-boot-dey/ccimx8x-sbc-pro/install_linux_fw_sd.txt
+index cce9bf8..51982e9 100644
+--- a/meta-digi-arm/recipes-bsp/u-boot/u-boot-dey/ccimx8x-sbc-pro/install_linux_fw_sd.txt
++++ b/meta-digi-arm/recipes-bsp/u-boot/u-boot-dey/ccimx8x-sbc-pro/install_linux_fw_sd.txt
+@@ -13,37 +13,28 @@ echo ""
+ echo " Press CTRL+C now if you wish to abort or wait 10 seconds"
+ echo " to continue."
+ 
+-sleep 10
++sleep 5
+ if test $? -eq 1; then
+ 	echo "Aborted by user.";
+ 	exit;
+ fi
+ 
+ # Determine U-Boot file to program basing on SOM's RAM size and SOC type (linked to bus width)
+-ram_freq="1.2GHz"
+-bus_width="32bit"
+-if test -n "${module_ram}" && test -n "${soc_type}"; then
+-	if test "${soc_type}" = "imx8dx"; then
+-		bus_width="16bit"
+-	fi
+-	setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-${ram_freq}_${module_ram}_${bus_width}.bin;
+-else
++
+ 	# Determine U-Boot file to program basing on SOM's variant
+-	if test -n "${module_variant}"; then
+-		if test "${module_variant}" = "0x01"; then
+-			setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_1GB_32bit.bin;
+-		elif test "${module_variant}" = "0x02" ||
+-		     test "${module_variant}" = "0x03"; then
+-			setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_2GB_32bit.bin;
+-		elif test "${module_variant}" = "0x04" ||
+-		     test "${module_variant}" = "0x05"; then
+-			setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_1GB_16bit.bin;
+-		elif test "${module_variant}" = "0x06"; then
+-			setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_512GB_16bit.bin;
+-		fi
+-	fi
++if test -n "${module_variant}"; then
++    if test "${module_variant}" = "0x01"; then
++    setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_1GB_32bit.bin;
++    elif test "${module_variant}" = "0x02" || test "${module_variant}" = "0x03"; then
++        setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_2GB_32bit.bin;
++    elif test "${module_variant}" = "0x04" || test "${module_variant}" = "0x05"; then
++        setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_1GB_16bit.bin;
++    elif test "${module_variant}" = "0x06"; then
++        setenv INSTALL_UBOOT_FILENAME imx-boot-ccimx8x-sbc-pro-1.2GHz_512GB_16bit.bin;
++    fi
+ fi
+ 
++
+ # Use 'test -n ...' because 'test -z ...' does not work well on old versions of
+ # u-boot when the checked value is empty.
+ if test -n "${INSTALL_UBOOT_FILENAME}"; then
+@@ -70,9 +61,9 @@ else
+ fi;
+ 
+ setenv INSTALL_MMCDEV 1
+-setenv INSTALL_LINUX_FILENAME dey-image-qt-##GRAPHICAL_BACKEND##-ccimx8x-sbc-pro.boot.vfat
+-setenv INSTALL_RECOVERY_FILENAME dey-image-qt-##GRAPHICAL_BACKEND##-ccimx8x-sbc-pro.recovery.vfat
+-setenv INSTALL_ROOTFS_FILENAME dey-image-qt-##GRAPHICAL_BACKEND##-ccimx8x-sbc-pro.ext4
++setenv INSTALL_LINUX_FILENAME dey-image-smartroad-ccimx8x-sbc-pro.boot.vfat
++setenv INSTALL_RECOVERY_FILENAME dey-image-smartroad-ccimx8x-sbc-pro.recovery.vfat
++setenv INSTALL_ROOTFS_FILENAME dey-image-smartroad-ccimx8x-sbc-pro.ext4
+ 
+ # Check for presence of firmware files on the SD card
+ for install_f in ${INSTALL_UBOOT_FILENAME} ${INSTALL_LINUX_FILENAME} ${INSTALL_RECOVERY_FILENAME} ${INSTALL_ROOTFS_FILENAME}; do
+@@ -92,7 +83,7 @@ setenv forced_update 1
+ # Set bootdelay to zero so that firmware update is run immediately after
+ # the first reset.
+ setenv bootdelay 0
+-
++wdt stop
+ # Set target MMC device index to eMMC
+ setenv mmcdev 0
+ 
+@@ -124,6 +115,7 @@ fi
+ setenv bootcmd "
+ 	env default -a;
+ 	saveenv;
++	wdt stop;
+ 	setenv otf-update yes;
+ 	echo \"\";
+ 	echo \"\";
+diff --git a/meta-digi-arm/recipes-digi/trustfence/trustfence-sign-tools_git.bb b/meta-digi-arm/recipes-digi/trustfence/trustfence-sign-tools_git.bb
+index bd0128f..7d1ff1a 100644
+--- a/meta-digi-arm/recipes-digi/trustfence/trustfence-sign-tools_git.bb
++++ b/meta-digi-arm/recipes-digi/trustfence/trustfence-sign-tools_git.bb
+@@ -14,7 +14,7 @@ S = "${WORKDIR}"
+ UBOOT_GIT_URI ?= "${@oe.utils.conditional('DIGI_INTERNAL_GIT', '1' , '${DIGI_GIT}u-boot-denx.git', '${DIGI_GITHUB_GIT}/u-boot.git;protocol=https', d)}"
+ 
+ SRC_URI = " \
+-    ${UBOOT_GIT_URI};nobranch=1 \
++	${UBOOT_GIT_URI};protocol=http;branch=${SRCBRANCH} \
+     file://trustfence-sign-kernel.sh;name=kernel-script \
+     file://sign_uimage;name=kernel-sign \
+     file://encrypt_uimage;name=kernel-encrypt \
+diff --git a/meta-digi-arm/recipes-kernel/kernel-module-qualcomm/kernel-module-qualcomm.bb b/meta-digi-arm/recipes-kernel/kernel-module-qualcomm/kernel-module-qualcomm.bb
+index 4cc2534..9e240a1 100644
+--- a/meta-digi-arm/recipes-kernel/kernel-module-qualcomm/kernel-module-qualcomm.bb
++++ b/meta-digi-arm/recipes-kernel/kernel-module-qualcomm/kernel-module-qualcomm.bb
+@@ -14,10 +14,10 @@ SRCBRANCH_ccimx8x = "qca6574/dey-2.6/maint"
+ SRCREV = "9b772af82d96a942bb1927fb9596069a121e4cea"
+ SRCREV_ccimx8x = "3e6c96c3682c39be5068b6969e552e5c193d17af"
+ 
+-QCOM_GIT_URI = "${@oe.utils.conditional('DIGI_INTERNAL_GIT', '1' , '${DIGI_MTK_GIT}linux/qcacld-2.0.git;protocol=ssh', '${DIGI_GITHUB_GIT}/qcacld-2.0.git;protocol=https', d)}"
++QCOM_GIT_URI = "${@oe.utils.conditional('DIGI_INTERNAL_GIT', '1' , '${DIGI_MTK_GIT}linux/qcacld-2.0.git;protocol=http', '${DIGI_GITHUB_GIT}/qcacld-2.0.git;protocol=https', d)}"
+ 
+ SRC_URI = " \
+-    ${QCOM_GIT_URI};nobranch=1 \
++    ${QCOM_GIT_URI};protocol=http;branch=${SRCBRANCH} \
+ "
+ 
+ # Selects whether the interface is SDIO or PCI
+diff --git a/meta-digi-arm/recipes-kernel/linux/linux-dey-src.inc b/meta-digi-arm/recipes-kernel/linux/linux-dey-src.inc
+index b6d95a9..0925b07 100644
+--- a/meta-digi-arm/recipes-kernel/linux/linux-dey-src.inc
++++ b/meta-digi-arm/recipes-kernel/linux/linux-dey-src.inc
+@@ -11,6 +11,6 @@ SRCREV_ccimx6 = "3af7f832df7462bc3b0f76d37ed3893aab2edc51"
+ 
+ # Select internal or Github Linux repo
+ LINUX_GIT_URI ?= "${@oe.utils.conditional('DIGI_INTERNAL_GIT', '1' , '${DIGI_GIT}linux-2.6.git', '${DIGI_GITHUB_GIT}/linux.git;protocol=https', d)}"
+-SRC_URI = "${LINUX_GIT_URI};nobranch=1"
++SRC_URI = "${LINUX_GIT_URI};protocol=http;branch=${SRCBRANCH}"
+ 
+ S = "${WORKDIR}/git"
+diff --git a/meta-digi-dey/recipes-connectivity/hostapd/hostapd/hostapd_wlan1.conf b/meta-digi-dey/recipes-connectivity/hostapd/hostapd/hostapd_wlan1.conf
+index a5ee3b9..94742d4 100644
+--- a/meta-digi-dey/recipes-connectivity/hostapd/hostapd/hostapd_wlan1.conf
++++ b/meta-digi-dey/recipes-connectivity/hostapd/hostapd/hostapd_wlan1.conf
+@@ -4,15 +4,14 @@ interface=wlan1
+ driver=nl80211
+ 
+ # WPA2-AES encryption
+-ssid=ap-wlan1-##MAC##
++ssid=conti-wlan1-##MAC##
+ auth_algs=1
+ wpa=2
+ wpa_key_mgmt=WPA-PSK
+ wpa_pairwise=CCMP
+-wpa_passphrase=password-wpa2aes
++wpa_passphrase=contismartroad
+ 
+-# IEEE 802.11ac
+-hw_mode=a
+-channel=36
+-ieee80211ac=1
++# IEEE 802.11b/g/n
++hw_mode=g
++channel=3
+ ieee80211n=1
+diff --git a/meta-digi-dey/recipes-core/busybox/busybox/digi-logo.png b/meta-digi-dey/recipes-core/busybox/busybox/digi-logo.png
+deleted file mode 100644
+index 837246a..0000000
+Binary files a/meta-digi-dey/recipes-core/busybox/busybox/digi-logo.png and /dev/null differ
+diff --git a/meta-digi-dey/recipes-core/busybox/busybox/index.html b/meta-digi-dey/recipes-core/busybox/busybox/index.html
+index 4c2de7a..8d29d8b 100644
+--- a/meta-digi-dey/recipes-core/busybox/busybox/index.html
++++ b/meta-digi-dey/recipes-core/busybox/busybox/index.html
+@@ -2,7 +2,7 @@
+ <html>
+     <head>
+ 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+-	<title>Digi International Inc. - Welcome!</title>
++	<title>Continental-corporation - Welcome!</title>
+ 	<style type="text/css">
+ 	    html, body, #wrapper {
+ 		height:100%;
+@@ -18,8 +18,8 @@
+ 	<table id="wrapper">
+ 	    <tr>
+ 		<td align="center" valign="middle">
+-		    <a href="http://www.digiembedded.com" target="_self">
+-			<img src="digi-logo.png" alt="Digi International Inc." border="0">
++		    <a href="https://www.continental-corporation.cn/zh-cn" target="_self">
++			<img src="conti.png" alt="Continental-corporation" border="0">
+ 		    </a>
+ 		</td>
+ 	    </tr>
+diff --git a/meta-digi-dey/recipes-core/busybox/busybox_1.29.%.bbappend b/meta-digi-dey/recipes-core/busybox/busybox_1.29.%.bbappend
+index b1aabfe..297cbae 100644
+--- a/meta-digi-dey/recipes-core/busybox/busybox_1.29.%.bbappend
++++ b/meta-digi-dey/recipes-core/busybox/busybox_1.29.%.bbappend
+@@ -7,7 +7,7 @@ SRC_URI += "file://standby \
+             file://standby-systemd \
+             file://busybox-ntpd \
+             file://index.html \
+-            file://digi-logo.png \
++            file://conti.png \
+             file://busybox-httpd.service.in \
+             file://nm \
+             file://busybox-acpid \
+@@ -55,7 +55,7 @@ do_install_append() {
+ 	if grep "CONFIG_HTTPD=y" ${WORKDIR}/defconfig; then
+ 		install -d ${D}/srv/www/cgi-bin
+ 		install -m 0644 ${WORKDIR}/index.html ${D}/srv/www/
+-		install -m 0644 ${WORKDIR}/digi-logo.png ${D}/srv/www/
++		install -m 0644 ${WORKDIR}/conti.png ${D}/srv/www/
+ 		install -m 0755 ${WORKDIR}/nm ${D}/srv/www/cgi-bin/
+ 		if ${HAS_SYSTEMD}; then
+ 			install -d ${D}${systemd_unitdir}/system
+diff --git a/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.dhcp b/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.dhcp
+index 887f303..3bd859e 100644
+--- a/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.dhcp
++++ b/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.dhcp
+@@ -1,5 +1,5 @@
+ 
+-#auto wlan1
++auto wlan1
+ iface wlan1 inet dhcp
+        udhcpc_opts -S -b >/dev/null &
+        post-up ##WLAN1_POST_UP_ACTION##
+diff --git a/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.static b/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.static
+index 17e4a10..b592c1c 100644
+--- a/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.static
++++ b/meta-digi-dey/recipes-core/init-ifupdown/init-ifupdown-1.0/interfaces.wlan1.static
+@@ -1,9 +1,10 @@
+ 
+-#auto wlan1
++auto wlan1
+ iface wlan1 inet static
+         address ##WLAN1_STATIC_IP##
+         netmask ##WLAN1_STATIC_NETMASK##
+         gateway ##WLAN1_STATIC_GATEWAY##
+         dns-nameservers ##WLAN1_STATIC_DNS##
+         post-up ##WLAN1_POST_UP_ACTION##
++	post-up udhcpd -S /etc/dhcp/udhcp.conf
+         pre-down ##WLAN1_PRE_DOWN_ACTION##
