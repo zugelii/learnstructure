@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2019 Continental AG and subsidiaries
+# Copyright (c) 2019  AG and subsidiaries
 #
-DESCRIPTION = "Yocto Image for China SmartRoad - Digi iMX8X SBC PRO based"
+DESCRIPTION = "Yocto Image  - Digi iMX8X SBC PRO based"
 LICENSE	    = "CLOSED"
 
 
@@ -27,8 +27,6 @@ IMAGE_INSTALL_append = " dpkg  mosquitto \
 	iperf3 mosquitto-clients chrony chronyc squashfs-tools vlan libcgroup tcpdump tzdata \
 	libdigiapix screen htop stress"
 
-#inherit extrausers
-#EXTRA_USERS_PARAMS = "usermod -P contismartrd root;"
 
 
 
