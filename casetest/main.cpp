@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <sstream>
 #include <map>
+#include <fstream>
 
 using namespace::std;
 
@@ -61,10 +62,21 @@ void format_string()  //linke snprinf
     cout << str << endl;
 }
 
+void file_operate()
+{
+    ofstream outfile;
+    outfile.open("afile.dat", ios::app);
+    string wf("write data to a file");
+    outfile << wf << endl;
+    outfile.flush(); //write date to disk
+    outfile.close();
+}
+
 int main(int argc, char**argv)
 {
  
     get_aimed_format_time();//
     format_string();
+    file_operate();//
 
 }
