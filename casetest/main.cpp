@@ -51,9 +51,20 @@ void get_aimed_format_time()
     cout << currentDateTime() << endl;
 }
 
+
+void format_string()  //linke snprinf
+{
+    double a=35.000,b=14.967;	
+    std::ostringstream   ostr; 
+	ostr   <<   "a+b="   <<   a   <<   "+"   <<   b   <<   "="   <<   a+b;
+	string str = ostr.str();
+    cout << str << endl;
+}
+
 int main(int argc, char**argv)
 {
  
     get_aimed_format_time();//
+    format_string();
 
 }
