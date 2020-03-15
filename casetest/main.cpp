@@ -17,6 +17,8 @@
 #include <map>
 #include <fstream>
 
+#include "lane.h"
+
 using namespace::std;
 
 
@@ -75,8 +77,17 @@ void file_operate()
 int main(int argc, char**argv)
 {
  
-    get_aimed_format_time();//
-    format_string();
-    file_operate();//
+    //get_aimed_format_time();//
+    //format_string();
+    //file_operate();//s
+    LINE l;
+    l.p1.x = 453.0;
+    l.p1.y = 229.0;
+    l.p2.x = 908.0;
+    l.p2.y = 436.0;
+    init_lines();
+    int32_t lane_number;
+    lane_number = get_lane(l, 1);
+    cout << "the car's lane is : " << lane_number << endl;
 
 }
