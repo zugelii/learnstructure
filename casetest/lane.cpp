@@ -51,6 +51,7 @@ bool init_lines()
         cout << "lines vertor size:" << lines_vector.size() << endl;
 
     }
+    return true;
 }
 
 map<int32_t, string> point_position_description = {
@@ -114,7 +115,7 @@ int32_t check_point_position(POINT check_piont, LINE line)
 int32_t get_lane(RECT test_rect, int16_t check_point)
 {
 
-
+    return 0;
 }
 
 //check_point: 0: p1  1: p2
@@ -124,6 +125,11 @@ int32_t get_lane(LINE test_line, int16_t check_start_flag)
     vector<int32_t> point_pos;
     int32_t ret;
     int32_t lane_num = -1;
+    //check point whether in the range or not
+    if((p.y > lines_vector[0].p1.y) || (p.y < lines_vector[0].p2.y))
+    {
+        return -1;
+    }
     for(int16_t i = 0; i < lines_vector.size(); i++)
     {
         ret = check_point_position(p, lines_vector[i]);
