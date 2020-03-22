@@ -14,7 +14,7 @@ file(GLOB SRC_FILE_LIST ./*.cpp)
 
 add_executable(${PROJECT_NAME} ${SRC_FILE_LIST})
 
-target_link_libraries(${PROJECT_NAME} eCAL::core ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries(${PROJECT_NAME} eCAL::core ${CMAKE_THREAD_LIBS_INIT} rt)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "bin")
 
