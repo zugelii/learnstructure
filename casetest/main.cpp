@@ -17,7 +17,14 @@
 #include <map>
 #include <fstream>
 
+
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <arpa/inet.h>
+
 #include "lane.h"
+
+#include "share_mem.h"
 
 using namespace::std;
 
@@ -74,12 +81,30 @@ void file_operate()
     outfile.close();
 }
 
+void get_mac(char * mac_a)
+{
+    int                 sockfd;
+    struct ifreq        ifr;
+
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd == -1) {
+        perror("socket error");
+        exit(1);
+    }
+    strncpy(ifr.ifr_name, "ens34", IFNAMSIZ);      //Interface name
+
+    if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) == 0) {  //SIOCGIFHWADDR 获取hardware address
+        memcpy(mac_a, ifr.ifr_hwaddr.sa_data, 6);
+    }
+}
+
 int main(int argc, char**argv)
 {
  
     //get_aimed_format_time();//
     //format_string();
     //file_operate();//s
+    /*
     LINE l;
     l.p1.x = 453.0;
     l.p1.y = 229.0;
@@ -89,5 +114,13 @@ int main(int argc, char**argv)
     int32_t lane_number;
     lane_number = get_lane(l, 1);
     cout << "the car's lane is : " << lane_number << endl;
+    */
+    //test_share_mem();
+    char this_mac[6];
+    char buf[20];
+    get_mac(this_mac);
+    sprintf(buf, "%02X%02X%02X%02X%02X%02X", this_mac[0],this_mac[1], this_mac[2], this_mac[3], this_mac[4], this_mac[5]);
+    string mc = buf;
+    cout << mc << endl;
 
 }
