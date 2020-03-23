@@ -13,3 +13,5 @@ _build
 .vscode/**
 armb
 meta-leo
+ecalpro/build
+ecalpro/armb

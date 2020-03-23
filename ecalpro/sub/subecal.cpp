@@ -6,7 +6,7 @@ using namespace std;
 
 void thread_ecal(const string& t)
 {
-  eCAL::Initialize(0, nullptr, "power mointor subscriber ");
+  eCAL::Initialize(0, nullptr, "ecal test subscriber ");
   eCAL::CSubscriber sub(t, "std::string");
   string msg;
   while(1)
@@ -30,15 +30,15 @@ int main(int argc, char **argv)
   //th2.join();
   // finalize eCAL API
   cout << __FUNCTION__ << endl;
-  eCAL::Initialize(0, nullptr, "power mointor subscriber ");
+  eCAL::Initialize(0, nullptr, "ecal test subscriber ");
   cout << "log level:" << eCAL::Logging::GetLogLevel() << endl;
- // eCAL::CSubscriber sub("testecal123", "std::string");
+  eCAL::CSubscriber sub("testecal123", "std::string");
   string msg;
   int len = 0;
   while(1)
   {
-   //   msg.clear();
-      //len = sub.Receive(msg, nullptr, -1); 
+      msg.clear();
+      len = sub.Receive(msg, nullptr, -1); 
       cout << "len: " << len << "msg:" << msg << endl;
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));	
       
