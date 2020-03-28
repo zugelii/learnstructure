@@ -23,8 +23,7 @@
 #include <arpa/inet.h>
 
 #include "lane.h"
-
-#include "share_mem.h"
+#include <stdio.h>
 
 using namespace::std;
 
@@ -116,11 +115,30 @@ int main(int argc, char**argv)
     cout << "the car's lane is : " << lane_number << endl;
     */
     //test_share_mem();
+    /*
     char this_mac[6];
     char buf[20];
     get_mac(this_mac);
     sprintf(buf, "%02X%02X%02X%02X%02X%02X", this_mac[0],this_mac[1], this_mac[2], this_mac[3], this_mac[4], this_mac[5]);
     string mc = buf;
     cout << mc << endl;
+    */
+    init_lines(10);
+    LINE l;
+    l.p1.x = 562.0;
+    l.p1.y = 840.0;
+    int16_t i = 0;
+    while (i < 10)
+    {
+        l.p2.x = 883.0;
+        l.p2.y = 545.0;
+        scanf("%f,%f", &(l.p2.x), &(l.p2.y));
+        int32_t lane_number;
+        lane_number = get_lane_multi_point(l, 1);
+        cout << "the car's lane is : " << lane_number << endl; 
+        i++; 
+    }
+    
+ 
 
 }

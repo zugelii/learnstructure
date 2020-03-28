@@ -47,3 +47,7 @@ int32_t check_point_position(POINT check_piont, LINE line);
 int32_t get_lane(RECT test_rect, int16_t check_point);
 //check_point: 0: p1  1: p2
 int32_t get_lane(LINE test_line, int16_t check_start_flag);
+
+bool init_lines(int16_t max);
+//check_point: 0: p1  1: p2
+int32_t get_lane_multi_point(LINE test_line, int16_t check_start_flag);
