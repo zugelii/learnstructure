@@ -15,6 +15,12 @@ configure_file (
 # so that we will find TutorialConfig.h
 include_directories("${PROJECT_BINARY_DIR}") 
 
+#add a macro that could be used in the source files
+add_definitions(-DMACROS_DEFINE)  #for c++ macro
+set (MACROS_DEFINE True)
+if(${MACROS_DEFINE})
+  message(STATUS "add a macro for sources file")
+endif (${MACROS_DEFINE})
 
 # should we use our own math functions?
 option (USE_MYMATH "Use tutorial provided math implementation" ON) 
@@ -24,6 +30,10 @@ if (USE_MYMATH)
   set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
 endif (USE_MYMATH)
 
-
 add_executable(Tutorial tutorial.cpp)
 target_link_libraries (Tutorial ${EXTRA_LIBS}) 
+
+#install tagets to bin and install file to include
+# add the install targets
+install (TARGETS Tutorial DESTINATION bin)
+install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h"  DESTINATION include)
