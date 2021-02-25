@@ -1,0 +1,6 @@
+[submodule "Proto"]
+	path = Proto
+	url = git@github.conti.de:Corp-SnT-SmartRoad/Proto.git
+[submodule "Helper"]
+	path = Helper
+	url = git@github.conti.de:Corp-SnT-SmartRoad/Helper.git

@@ -1,0 +1,6 @@
+{
+	"imageInterval":15,
+	"captureFlag" : 0,
+	"rtsp" : "rtsp://admin:Contismartrd@192.168.1.164:554/h264/ch1/sub/av_stream",
+	"caputreFrame": 1
+}

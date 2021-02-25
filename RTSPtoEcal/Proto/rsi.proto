@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package pb;
+
+import "type.proto";
+
+message TusEvent
+{
+    EventsType      EventType = 1;
+    SourceType      Source = 2;
+    int32           laneId = 3;             //1 - ...
+    float           heading = 4;            //0-360 degree (TUS only)
+    int32           TrafficFlow = 5;        //vehicle count / minute
+    int32           mediaType = 9;
+    int32           mediaLen = 10;
+    string          mediaURL = 11;    
+}
+
+message RoadSideInformation
+{
+    int64           timeStamp = 1;          //unit: ms
+    uint32          rsiID = 2;              //0-255   
+    string          id = 3;                 //SIZE(8)
+    int32           AlertType = 4;          //0 - 65535
+    int32           priority = 5;           //0x00 - 0xE0
+    PositionOffset  refPos = 6;
+    bytes           description = 7;            // that is GBT description
+    repeated PositionOffset alertPath = 8;
+    int32           alertRadius = 9;       //unit: radius/10cm   INTEGER(0..1024)
+    TusEvent        TusEvent = 10;          //for TUS cloud
+}

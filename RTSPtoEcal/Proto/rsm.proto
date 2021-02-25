@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package pb;
+
+import "type.proto";
+
+enum ParticipantType
+{
+    Unknown = 0;    // (0), -- B'0000 Unknown
+    Motor = 1;      // (1), -- B'0001 motor
+    NonMotor = 2;   // (2), -- B'0010 non-motor
+    Pedestrian = 3; // (3), -- B'0011 pedestrian
+    RSU = 4;        // (4), -- B'0100 rsu
+}
+
+message VehicleSize
+{
+    float Length = 1;   //unit: meter
+    float Width = 2;    //unit: meter
+    float Height = 3;   //unit: meter
+}
+
+enum BasicVehicleClass
+{
+    UnknownVehicleClass = 0;
+    SpecialVehicleClass = 1;
+    PassengerVehicleTypeUnknown = 10;
+    LightTruckTypeUnknow = 20;
+    TruckaxleCnt7MultiTrailer = 35;
+    MotorcycleTypeUnknown = 40;
+    MotrocyclewPassengers = 48;
+    TransitTypeUnknown = 50;
+    TransitAmbulance = 58;
+    EmergencyFireHeavy = 63;
+    EmergencyOtherAmbulance = 69;
+    OtherTravelerTypeOther = 81;    //for animals
+    OtherTravelerPedestrian = 82;
+    OtherTravelerBicycle = 85;
+}
+
+message ParticipantData
+{
+    ParticipantType PtcType = 1;
+    sint32 PtcId = 2;                       //0 - 65535
+    SourceType Source = 3;
+    bytes id = 4;                           //optional, but reqired by CiDi
+    bytes plateNo = 5;                      //used as lane id by CiDi
+    PositionOffset PositionOffset = 6;
+    sint32 Speed = 7;                       //unit: m/s
+    float Heading = 8;                      //unit: degree (0.0000f - 359.9999f), clockwise from north
+    VehicleSize Size = 9;
+    BasicVehicleClass VehicleClass = 10;
+    sint32 PixelX = 11;                     //for TUS only
+    sint32 PixelY = 12;
+    sint32 PixelWidth = 13;
+    sint32 PixelHeight = 14;
+    sint32 laneId = 15;
+}
+
+message RoadsideSafetyMessage
+{
+    PositionOffset refPosition = 1;
+    repeated ParticipantData ParticipantList = 2;
+}

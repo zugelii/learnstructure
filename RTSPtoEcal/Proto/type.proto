@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package pb;
+
+//TUS
+message PositionOffset
+{
+    double Longi = 1;   //unit: longitule, 112.123456
+    double Lati = 2;    //unit: latitule, 28.123456
+    float Z = 3;        //unit: meter
+}
+
+//GBT31024
+enum SourceType
+{
+    UnknownSource = 0;
+    SelfInfo = 1;
+    V2X = 2;
+    Video = 3;
+    Radar = 4;
+    Loop = 5;
+}
+
+//TUS
+enum EventsType
+{   
+    OTHER_TYPE = 0;
+    HIGH_LIMITE_SPEED = 1;
+    TRAFFIC_ACCIDENTS = 2;
+    RETROGRADE = 3;
+    BACK_CAR = 4;
+    EMERGENCY_BRAKING = 5;
+    CONTINUOUS_DOUBLING = 6;
+    S_SHAPE_DRIVING = 7;
+    OBSTACKLES = 8;
+    PEDESTRIAN = 9;
+    BREAKDOWN = 10;
+    FIRE = 11;
+}
+
